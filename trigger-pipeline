@@ -7,7 +7,7 @@ import time
 import requests
 
 
-FAILED_STATES = ['canceled']
+FAILED_STATES = ['canceled', 'failed']
 GITLAB_HOSTNAME = os.environ['GITLAB_HOSTNAME']
 GITLAB_TOKEN = os.environ['GITLAB_PASSWORD']
 GITLAB_PROJECT_ID = os.environ['GITLAB_PROJECT_ID']
