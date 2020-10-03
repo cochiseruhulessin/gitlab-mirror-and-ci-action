@@ -9,7 +9,9 @@ LABEL "repository"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "homepage"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "maintainer"="Sebass van Boxel <hello@svboxel.com>"
 
-RUN apk update && apk add python3
+RUN apk update && apk add --no-cache python3
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3
+RUN python3 -m pip install requests
 COPY entrypoint.sh /entrypoint.sh
 COPY cred-helper.sh /cred-helper.sh
 ENTRYPOINT ["/entrypoint.sh"]
