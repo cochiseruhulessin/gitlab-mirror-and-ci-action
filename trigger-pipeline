@@ -26,7 +26,7 @@ def main(hostname, token, project_id, ref):
     dto = response.json()
     print("remote:")
     print("remote: To view the GitLab pipeline for this action, visit:")
-    print(f"remote: dto['web_url']")
+    print(f"remote: {dto['web_url']}")
     print("remote:")
     
     pipeline_id = dto['id']
