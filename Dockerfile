@@ -9,7 +9,7 @@ LABEL "repository"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "homepage"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "maintainer"="Sebass van Boxel <hello@svboxel.com>"
 
-
+RUN apk update && apk add python3
 COPY entrypoint.sh /entrypoint.sh
 COPY cred-helper.sh /cred-helper.sh
 ENTRYPOINT ["/entrypoint.sh"]
