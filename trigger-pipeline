@@ -42,4 +42,3 @@ def main(hostname, token, project_id, ref):
 
 if __name__ == '__main__':
     main(GITLAB_HOSTNAME, GITLAB_TOKEN, GITLAB_PROJECT_ID, sys.argv[1])
-cochise@cochise:~/client-chevron-portfoliooptim
