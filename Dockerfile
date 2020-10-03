@@ -1,4 +1,4 @@
-FROM makocchi/alpine-git-curl-jq:latest
+FROM python:3.8-alpine
 
 LABEL "com.github.actions.name"="Mirror to GitLab and run GitLab CI"
 LABEL "com.github.actions.description"="Automate mirroring of git commits to GitLab, trigger GitLab CI and post results back to GitHub"
@@ -9,9 +9,8 @@ LABEL "repository"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "homepage"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "maintainer"="Sebass van Boxel <hello@svboxel.com>"
 
-RUN apk update && apk add --no-cache python3
-RUN curl https://bootstrap.pypa.io/get-pip.py | python3
-RUN python3 -m pip install requests
+RUN apk update && apk add --no-cache curl git
+RUN python -m pip install requests
 COPY entrypoint.sh /entrypoint.sh
 COPY cred-helper.sh /cred-helper.sh
 COPY trigger-pipeline /trigger-pipeline
