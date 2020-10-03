@@ -14,4 +14,6 @@ RUN curl https://bootstrap.pypa.io/get-pip.py | python3
 RUN python3 -m pip install requests
 COPY entrypoint.sh /entrypoint.sh
 COPY cred-helper.sh /cred-helper.sh
+COPY trigger-pipeline /trigger-pipeline
+RUN chmod +x /trigger-pipeline
 ENTRYPOINT ["/entrypoint.sh"]
