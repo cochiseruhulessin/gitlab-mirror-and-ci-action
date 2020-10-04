@@ -10,7 +10,7 @@ LABEL "homepage"="https://github.com/SvanBoxel/gitlab-mirror-and-ci-action"
 LABEL "maintainer"="Sebass van Boxel <hello@svboxel.com>"
 
 RUN apk update && apk add --no-cache curl git
-RUN python -m pip install requests
+RUN python -m pip install python-gitlab
 COPY entrypoint.sh /entrypoint.sh
 COPY cred-helper.sh /cred-helper.sh
 COPY trigger-pipeline /trigger-pipeline
