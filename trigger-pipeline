@@ -11,12 +11,24 @@ FAILED_STATES = ['canceled', 'failed']
 GITLAB_HOSTNAME = os.environ['GITLAB_HOSTNAME']
 GITLAB_TOKEN = os.environ['GITLAB_PASSWORD']
 GITLAB_PROJECT_ID = os.environ['GITLAB_PROJECT_ID']
+PASS_VARIABLES = os.getenv('PASS_VARIABLES')
+
+
+def get_environment():
+    """Return a dictionary holding the environment variables used by the pipeline."""
+    if not PASS_VARIABLES:
+        return
+    environ = {}
+    for k in filter(bool, str.split(PASS_VARIABLES, ':')):
+        if not os.getenv(k):
+            continue
+        environ[k] = os.getenv(k)
+    return [{'key': x, 'value': y} for x, y in dict.items(environ)]
 
 
 def main(hostname, token, project_id, ref):
     headers = {'PRIVATE-TOKEN': token}
     endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipeline?ref={ref}"
-
     response = requests.post(endpoint, headers=headers)
     try:
         response.raise_for_status()
@@ -28,7 +40,7 @@ def main(hostname, token, project_id, ref):
     print("remote: To view the GitLab pipeline for this action, visit:")
     print(f"remote: {dto['web_url']}")
     print("remote:")
-    
+          
     pipeline_id = dto['id']
     endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipelines/{pipeline_id}"
     while dto['finished_at'] is None:
