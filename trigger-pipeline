@@ -18,19 +18,20 @@ def get_environment():
     """Return a dictionary holding the environment variables used by the pipeline."""
     if not PASS_VARIABLES:
         print("No environment variable were specified to add to the pipeline.")
-        return
+        return {}
     environ = {}
     for k in filter(bool, str.split(PASS_VARIABLES, ':')):
         if not os.getenv(k):
             continue
         environ[k] = os.getenv(k)
-    return [{'key': x, 'value': y, 'variable_type': 'env_var'} for x, y in dict.items(environ)]
+    return environ
 
 
 def main(hostname, token, project_id, ref):
     headers = {'PRIVATE-TOKEN': token}
-    endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipeline?ref={ref}"
-    response = requests.post(endpoint, headers={"Content-Type": "application/json", **headers}, json=get_environment())
+    endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipeline"
+    response = requests.post(endpoint, headers=headers, data={'ref': ref},
+        params=get_environment())
     try:
         response.raise_for_status()
     except Exception as e:
