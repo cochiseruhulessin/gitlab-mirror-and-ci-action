@@ -4,7 +4,7 @@ import os
 import sys
 import time
 
-import requests
+import gitlab
 
 
 FAILED_STATES = ['canceled', 'failed']
@@ -18,44 +18,34 @@ def get_environment():
     """Return a dictionary holding the environment variables used by the pipeline."""
     if not PASS_VARIABLES:
         print("No environment variable were specified to add to the pipeline.")
-        return {}
+        return []
     environ = {}
     for k in filter(bool, str.split(PASS_VARIABLES, ':')):
         if not os.getenv(k):
             continue
         environ[k] = os.getenv(k)
-    return environ
+    return [{'key': x, 'value': y} for x, y in dict.items(environ)]
 
 
 def main(hostname, token, project_id, ref):
-    headers = {'PRIVATE-TOKEN': token}
-    endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipeline"
-    response = requests.post(endpoint, headers=headers, data={'ref': ref},
-        params=get_environment())
-    try:
-        response.raise_for_status()
-    except Exception as e:
-        print(json.dumps(response.json(), indent=2))
-        raise
-    dto = response.json()
+    client = gitlab.Gitlab(f'https://{hostname}', private_token=token)
+    project = client.projects.get(project_id)
+    pipeline = project.pipelines.create({
+        'ref': ref,
+        'variables': get_environment()
+    })
     print("remote:")
     print("remote: To view the GitLab pipeline for this action, visit:")
-    print(f"remote: {dto['web_url']}")
+    print(f"remote:  {pipeline.web_url}")
     print("remote:")
-          
-    pipeline_id = dto['id']
-    endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipelines/{pipeline_id}"
-    while dto['finished_at'] is None:
+    while pipeline.finished_at is None:
         time.sleep(5)
-        response = requests.get(endpoint, headers=headers)
-        response.raise_for_status()
-        dto = response.json()
+        pipeline.refresh()
 
-    status = dto.get('status')
-    if status in FAILED_STATES:
-        print(f"Pipeline errored with status {status}", file=sys.stderr)
+    if pipeline.status in FAILED_STATES:
+        print(f"remote: Pipeline errored with status {pipeline.status}", file=sys.stderr)
         sys.exit(1)
-    print(f"Pipeline finished with state: {status}")
+    print(f"remote: Pipeline finished with state: {pipeline.status}")
 
 
 if __name__ == '__main__':
