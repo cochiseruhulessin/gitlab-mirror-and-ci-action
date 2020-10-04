@@ -17,6 +17,7 @@ PASS_VARIABLES = os.getenv('PASS_VARIABLES')
 def get_environment():
     """Return a dictionary holding the environment variables used by the pipeline."""
     if not PASS_VARIABLES:
+        print("No environment variable were specified to add to the pipeline.")
         return
     environ = {}
     for k in filter(bool, str.split(PASS_VARIABLES, ':')):
