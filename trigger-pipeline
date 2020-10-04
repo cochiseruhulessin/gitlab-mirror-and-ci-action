@@ -24,7 +24,7 @@ def get_environment():
         if not os.getenv(k):
             continue
         environ[k] = os.getenv(k)
-    return [{'key': x, 'value': y} for x, y in dict.items(environ)]
+    return [{'key': x, 'value': y, 'variable_type': 'env_var'} for x, y in dict.items(environ)]
 
 
 def main(hostname, token, project_id, ref):
