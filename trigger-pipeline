@@ -29,7 +29,7 @@ def get_environment():
 def main(hostname, token, project_id, ref):
     headers = {'PRIVATE-TOKEN': token}
     endpoint = f"https://{hostname}/api/v4/projects/{project_id}/pipeline?ref={ref}"
-    response = requests.post(endpoint, headers=headers, json=get_environment())
+    response = requests.post(endpoint, headers={"Content-Type": "application/json", **headers}, json=get_environment())
     try:
         response.raise_for_status()
     except Exception as e:
